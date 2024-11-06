@@ -1,0 +1,9 @@
+# site.yml
+---
+- hosts: all
+  become: true
+  roles:
+    - role: nivida11
+  vars:
+    # Override role defaults here if needed
+    use_open_kernel_module: true

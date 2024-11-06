@@ -1,0 +1,12 @@
+---
+- name: Start and enable NVIDIA persistence daemon on Debian
+  ansible.builtin.systemd:
+    name: nvidia-persistenced
+    enabled: true
+    state: started
+- name: Start and enable NVIDIA service on Rhel
+  ansible.builtin.systemd:
+    name: nvidia-persistenced
+    enabled: true
+    state: started
+  become: true

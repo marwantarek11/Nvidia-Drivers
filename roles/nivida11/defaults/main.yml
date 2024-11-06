@@ -1,0 +1,4 @@
+---
+use_open_kernel_module: true
+cuda_toolkit_version: "12-6"
+cuda_repo_url: "https://developer.download.nvidia.com/compute/cuda/repos/debian12/x86_64/cuda-keyring_1.1-1_all.deb"

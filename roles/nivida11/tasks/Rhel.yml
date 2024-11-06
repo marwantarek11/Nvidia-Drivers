@@ -1,0 +1,35 @@
+---
+- name: Install dnf-plugins-core (required for managing repositories)
+  ansible.builtin.dnf:
+    name: dnf-plugins-core
+    state: present
+    become: true
+
+- name: Add CUDA repository GPG key
+  ansible.builtin.rpm_key:
+    state: present
+    key: "{{ cuda_rhel_gpg_key_url }}"
+
+- name: Add NVIDIA CUDA repository
+  ansible.builtin.command:
+    cmd: "dnf config-manager --add-repo {{ nvidia_drivers_rhel_repo }}"
+  become: true
+
+- name: Clean dnf cache
+  ansible.builtin.command:
+    cmd: "dnf clean all"
+  become: true
+
+- name: Install NVIDIA driver (latest DKMS)
+  ansible.builtin.dnf:
+    name: "nvidia-driver:latest-dkms"
+    state: present
+  become: true
+  notify: Start and enable NVIDIA service
+
+- name: Install NVIDIA driver (open DKMS)
+  ansible.builtin.dnf:
+    name: "nvidia-driver:open-dkms"
+    state: present
+  become: true
+  notify: Start and enable NVIDIA service on Rhel

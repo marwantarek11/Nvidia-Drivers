@@ -1,0 +1,62 @@
+---
+- name: Update apt cache and upgrade system
+  ansible.builtin.apt:
+    update_cache: true
+    upgrade: dist
+
+- name: Install required packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop: '{{ debian_required_packages }}'
+
+- name: Add CUDA repository GPG key for Ubuntu
+  ansible.builtin.apt_key:
+    url: "{{ cuda_Ubuntu_gpg_key_url }}"
+    state: present
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Add CUDA repository GPG key for Debian
+  ansible.builtin.apt_key:
+    url: "{{ cuda_Debian_gpg_key_url }}"
+    state: present
+  when: ansible_distribution == 'Debian'
+
+- name: Download CUDA keyring package for Ubuntu
+  ansible.builtin.get_url:
+    url: '{{ nvidia_drivers_Ubuntu_repo }}'
+    dest: "/tmp/cuda-keyring_1.1-1_all.deb"
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Download CUDA keyring package for Debian
+  ansible.builtin.get_url:
+    url: '{{ nvidia_drivers_debian_repo }}'
+    dest: "/tmp/cuda-keyring_1.1-1_all.deb"
+  when: ansible_distribution == 'Debian'
+
+- name: Install CUDA keyring package with dpkg
+  ansible.builtin.command:
+    cmd: "dpkg -i /tmp/cuda-keyring_1.1-1_all.deb"
+  register: dpkg_install
+  ignore_errors: yes
+
+- name: Check if dpkg install succeeded
+  ansible.builtin.fail:
+    msg: "CUDA keyring package installation failed."
+  when: dpkg_install.rc != 0
+
+- name: Create CUDA repository list file
+  ansible.builtin.template:
+    src: cuda_repository.j2
+    dest: /etc/apt/sources.list.d/cuda.list
+  when: ansible_distribution == 'Debian'
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install CUDA drivers
+  ansible.builtin.apt:
+    name: cuda-drivers
+    state: present
+  notify: Start and enable NVIDIA persistence daemon on Debian

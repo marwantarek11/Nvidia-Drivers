@@ -1,0 +1,12 @@
+---
+- name: Determine OS family
+  ansible.builtin.setup:
+    filter: ansible_os_family
+
+- name: Install NVIDIA drivers on Debian-based systems (including Ubuntu)
+  ansible.builtin.include_tasks: Debian.yml
+  when: ansible_facts['os_family'] == "Debian" or ansible_facts['distribution'] == "Ubuntu"
+
+- name: Install NVIDIA drivers on RHEL-based systems
+  ansible.builtin.include_tasks: Rhel.yml
+  when: ansible_facts['os_family'] == "RedHat"

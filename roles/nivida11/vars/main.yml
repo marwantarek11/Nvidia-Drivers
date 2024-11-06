@@ -1,0 +1,12 @@
+---
+nvidia_drivers_Ubuntu_repo: "https://developer.download.nvidia.com/compute/cuda/repos/{{ (ansible_distribution | lower | replace(' ', '')) + (ansible_distribution_version | replace('.', '')) }}/x86_64/"
+nvidia_drivers_rhel_repo: "https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ major_version }}/x86_64/"
+nvidia_drivers_debian_repo: "https://developer.download.nvidia.com/compute/cuda/repos/debian{{ ansible_distribution_major_version }}/x86_64/"
+cuda_rhel_gpg_key_url: "https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ major_version }}/x86_64/3bf863cc.pub"
+cuda_Debian_gpg_key_url: "https://developer.download.nvidia.com/compute/cuda/repos/debian{{ ansible_distribution_major_version }}/x86_64/3bf863cc.pub"
+cuda_Ubuntu_gpg_key_url: "https://developer.download.nvidia.com/compute/cuda/repos/{{ (ansible_distribution | lower | replace(' ', '')) + (ansible_distribution_version | replace('.', '')) }}/x86_64/3bf863cc.pub"
+debian_required_packages:
+  - wget
+  - apt-transport-https
+  - lsb-release
+  - dpkg
